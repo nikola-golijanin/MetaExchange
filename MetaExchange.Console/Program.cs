@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Globalization;
 using MetaExchange.Shared.Data;
+using MetaExchange.Shared.Model;
 using MetaExchange.Shared.Services;
 
 IOrderBookRepository orderBookRepository = new OrderBookRepository();
@@ -32,19 +33,19 @@ if (!double.TryParse(Console.ReadLine(), NumberStyles.Any, CultureInfo.Invariant
     return;
 }
 
-string orderType = choice == "1" ? "buy" : "sell";
+OrderType orderType = choice == "1" ? OrderType.Buy : OrderType.Sell;
 
 var orders = orderType switch
 {
-    "buy" => metaExchangeCalculator.GetBestAsks(amount),
-    "sell" => metaExchangeCalculator.GetBestBids(amount),
+    OrderType.Buy => metaExchangeCalculator.GetBestAsks(amount),
+    OrderType.Sell => metaExchangeCalculator.GetBestBids(amount),
     _ => throw new InvalidOperationException("Invalid choice")
 };
 
 Console.WriteLine("----------------------------------- Orders -----------------------------------");
 foreach (var order in orders)
 {
-    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}\n");
+    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}€ \n");
 }
 Console.WriteLine($"Total amount of BTC: {amount}, Total price in EUR: {orders.Sum(o => o.Amount * o.Price)}€");
 Console.WriteLine("-------------------------------------------------------------------------------");

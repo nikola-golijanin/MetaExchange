@@ -10,15 +10,15 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
     {
         _orderBooks = orderBookRepository.GetOrderBooks();
     }
-    public IEnumerable<Order> GetBestAsks(double amount) => GetBestOrders(_orderBooks, "buy", amount);
+    public IEnumerable<Order> GetBestAsks(double amount) => GetBestOrders(_orderBooks, OrderType.Buy, amount);
 
-    public IEnumerable<Order> GetBestBids(double amount) => GetBestOrders(_orderBooks, "sell", amount);
+    public IEnumerable<Order> GetBestBids(double amount) => GetBestOrders(_orderBooks, OrderType.Sell, amount);
 
-    private static List<Order> GetBestOrders(IEnumerable<OrderBook> orderBooks, string orderType, double amount)
+    private static List<Order> GetBestOrders(IEnumerable<OrderBook> orderBooks, OrderType orderType, double amount)
     {
         var result = new List<Order>();
 
-        if (orderType == "buy")
+        if (orderType is OrderType.Buy)
         {
             var askQueue = new PriorityQueue<(OrderBook orderBook, Order order), double>();
             foreach (var orderBook in orderBooks)
@@ -37,13 +37,13 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
 
                 if (orderBook.EurBtcBalance.EUR >= cost)
                 {
-                    result.Add(new Order { Type = "buy", Amount = availableAmount, Price = ask.Price });
+                    result.Add(new Order { Type = OrderType.Buy, Amount = availableAmount, Price = ask.Price });
                     orderBook.EurBtcBalance.EUR -= cost;
                     amount -= availableAmount;
                 }
             }
         }
-        else if (orderType == "sell")
+        else if (orderType is OrderType.Sell)
         {
             var bidQueue = new PriorityQueue<(OrderBook orderBook, Order order), double>(Comparer<double>.Create((x, y) => y.CompareTo(x)));
             foreach (var orderBook in orderBooks)
@@ -61,7 +61,7 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
 
                 if (orderBook.EurBtcBalance.BTC >= availableAmount)
                 {
-                    result.Add(new Order { Type = "sell", Amount = availableAmount, Price = bid.Price });
+                    result.Add(new Order { Type = OrderType.Sell, Amount = availableAmount, Price = bid.Price });
                     orderBook.EurBtcBalance.BTC -= availableAmount;
                     amount -= availableAmount;
                 }
