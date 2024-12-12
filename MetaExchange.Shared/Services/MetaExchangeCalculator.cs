@@ -5,19 +5,35 @@ namespace MetaExchange.Shared.Services;
 
 public class MetaExchangeCalculator : IMetaExchangeCalculator
 {
-    private readonly IEnumerable<OrderBook> _orderBooks;
+    private readonly IEnumerable<Exchange> _orderBooks;
     public MetaExchangeCalculator(IOrderBookRepository orderBookRepository)
     {
         _orderBooks = orderBookRepository.GetOrderBooks();
     }
-    public IEnumerable<Order> GetBestAsks(double amount) => CalculateBestAsks(_orderBooks, amount);
+    public IEnumerable<ExecutionPlan> GetBestExecutionPlanOrderByExchange(OrderType orderType, double amount)
+    {
+        var orders = GetBestExecutionPlan(orderType, amount);
+        var executionPlanOrderByExchange = orders.GroupBy(o => o.ExchangeName)
+                          .Select(grouping => new ExecutionPlan
+                          {
+                              ExchangeName = grouping.Key,
+                              Orders = [.. grouping]
+                          });
+        return executionPlanOrderByExchange;
+    }
 
-    public IEnumerable<Order> GetBestBids(double amount) => CalculateBestBids(_orderBooks, amount);
+    public IEnumerable<Order> GetBestExecutionPlan(OrderType orderType, double amount) =>
+        orderType switch
+        {
+            OrderType.Buy => CalculateBestAsks(_orderBooks, amount),
+            OrderType.Sell => CalculateBestBids(_orderBooks, amount),
+            _ => throw new ArgumentException("Invalid order type")
+        };
 
-    private static IEnumerable<Order> CalculateBestAsks(IEnumerable<OrderBook> orderBooks, double amount)
+    private static IEnumerable<Order> CalculateBestAsks(IEnumerable<Exchange> orderBooks, double amount)
     {
         var result = new List<Order>();
-        var askQueue = new PriorityQueue<(OrderBook orderBook, Order order), double>();
+        var askQueue = new PriorityQueue<(Exchange orderBook, Order order), double>();
 
         foreach (var exchange in orderBooks)
             foreach (var ask in exchange.Asks.Select(a => a.Order))
@@ -31,7 +47,7 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
 
             if (orderBook.EurBtcBalance.EUR >= cost)
             {
-                result.Add(new Order { Type = OrderType.Buy, Amount = availableAmount, Price = ask.Price });
+                result.Add(new Order { Type = OrderType.Buy, Amount = availableAmount, Price = ask.Price, ExchangeName = orderBook.ExchangeName });
                 orderBook.EurBtcBalance.EUR -= cost;
                 amount -= availableAmount;
             }
@@ -39,10 +55,10 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
         return result;
     }
 
-    private static IEnumerable<Order> CalculateBestBids(IEnumerable<OrderBook> orderBooks, double amount)
+    private static IEnumerable<Order> CalculateBestBids(IEnumerable<Exchange> orderBooks, double amount)
     {
         var result = new List<Order>();
-        var bidQueue = new PriorityQueue<(OrderBook orderBook, Order order), double>(Comparer<double>.Create((x, y) => y.CompareTo(x)));
+        var bidQueue = new PriorityQueue<(Exchange orderBook, Order order), double>(Comparer<double>.Create((x, y) => y.CompareTo(x)));
 
         foreach (var orderBook in orderBooks)
             foreach (var bid in orderBook.Bids.Select(b => b.Order))
@@ -55,11 +71,13 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
 
             if (orderBook.EurBtcBalance.BTC >= availableAmount)
             {
-                result.Add(new Order { Type = OrderType.Sell, Amount = availableAmount, Price = bid.Price });
+                result.Add(new Order { Type = OrderType.Sell, Amount = availableAmount, Price = bid.Price, ExchangeName = orderBook.ExchangeName });
                 orderBook.EurBtcBalance.BTC -= availableAmount;
                 amount -= availableAmount;
             }
         }
         return result;
     }
+
+
 }

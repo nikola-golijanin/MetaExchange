@@ -5,7 +5,6 @@ namespace MetaExchange.Shared.Services;
 
 public interface IMetaExchangeCalculator
 {
-    IEnumerable<Order> GetBestAsks(double amount);
-
-    IEnumerable<Order> GetBestBids(double amount);
+    IEnumerable<ExecutionPlan> GetBestExecutionPlanOrderByExchange(OrderType orderType, double amount);
+    IEnumerable<Order> GetBestExecutionPlan(OrderType orderType, double amount);
 }

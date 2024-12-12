@@ -4,5 +4,5 @@ namespace MetaExchange.Shared.Data;
 
 public interface IOrderBookRepository
 {
-    IEnumerable<OrderBook> GetOrderBooks();
+    IEnumerable<Exchange> GetOrderBooks();
 }

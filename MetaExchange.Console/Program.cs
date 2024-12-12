@@ -36,17 +36,17 @@ OrderType orderType = choice == "1" ? OrderType.Buy : OrderType.Sell;
 
 var orders = orderType switch
 {
-    OrderType.Buy => metaExchangeCalculator.GetBestAsks(amount),
-    OrderType.Sell => metaExchangeCalculator.GetBestBids(amount),
+    OrderType.Buy => metaExchangeCalculator.GetBestExecutionPlan(OrderType.Buy, amount),
+    OrderType.Sell => metaExchangeCalculator.GetBestExecutionPlan(OrderType.Sell, amount),
     _ => throw new InvalidOperationException("Invalid choice")
 };
 
 Console.WriteLine("----------------------------------- Orders -----------------------------------");
 foreach (var order in orders)
 {
-    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}€ \n");
+    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}€, From exchagne: {order.ExchangeName}\n");
 }
-Console.WriteLine($"Total amount of BTC: {amount}, Total price in EUR: {orders.Sum(o => o.Amount * o.Price)}€");
+Console.WriteLine($"Total amount of BTC: {orders.Sum(o => o.Amount)}, Total price in EUR: {orders.Sum(o => o.Amount * o.Price)}€");
 Console.WriteLine("-------------------------------------------------------------------------------");
 
 

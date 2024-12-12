@@ -1,6 +1,7 @@
 [
     {
         "AcqTime": "2019-01-29T11:00:00.2518854Z",
+        "ExchangeName": "Exchange 1",
         "Bids": [
             {
                 "Order": {
@@ -2012,6 +2013,7 @@
     },
     {
         "AcqTime": "2019-01-29T11:00:01.3369432Z",
+        "ExchangeName": "Exchange 2",
         "Bids": [
             {
                 "Order": {
