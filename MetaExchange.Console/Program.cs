@@ -1,22 +1,52 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.Globalization;
 using MetaExchange.Shared.Data;
 using MetaExchange.Shared.Services;
 
+IOrderBookRepository orderBookRepository = new OrderBookRepository();
+IMetaExchangeCalculator metaExchangeCalculator = new MetaExchangeCalculator(orderBookRepository);
 
-double amount = 1.5; // Amount of BTC to buy or sell
+
+Console.WriteLine("Welcome to MetaExchange!");
+Console.WriteLine("Please choose an option:");
+Console.WriteLine("1. Buy BTC");
+Console.WriteLine("2. Sell BTC");
+Console.WriteLine("3. Exit");
+
+var choice = Console.ReadLine();
+
+if (choice == "3")
+    return;
 
 
-var asks = new MetaExchangeCalculator(new OrderBookRepository()).GetBestAsks(amount);
-var bids = new MetaExchangeCalculator(new OrderBookRepository()).GetBestBids(amount);
-
-Console.WriteLine("----------------------------------- Asks  -----------------------------------");
-foreach (var order in asks)
+if (choice is not "1" && choice is not "2")
 {
-    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}");
+    Console.WriteLine("Invalid choice. Please enter 1, 2, or 3.");
+    return;
 }
 
-Console.WriteLine("----------------------------------- Bids  -----------------------------------");
-foreach (var order in bids)
+Console.Write("Enter the amount of BTC: ");
+if (!double.TryParse(Console.ReadLine(), NumberStyles.Any, CultureInfo.InvariantCulture, out double amount) || amount <= 0)
 {
-    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}");
+    Console.WriteLine("Invalid amount. Please enter a positive number.");
+    return;
 }
+
+string orderType = choice == "1" ? "buy" : "sell";
+
+var orders = orderType switch
+{
+    "buy" => metaExchangeCalculator.GetBestAsks(amount),
+    "sell" => metaExchangeCalculator.GetBestBids(amount),
+    _ => throw new InvalidOperationException("Invalid choice")
+};
+
+Console.WriteLine("----------------------------------- Orders -----------------------------------");
+foreach (var order in orders)
+{
+    Console.WriteLine($"Type: {order.Type}, Amount: {order.Amount}, Price: {order.Price}\n");
+}
+Console.WriteLine($"Total amount of BTC: {amount}, Total price in EUR: {orders.Sum(o => o.Amount * o.Price)}€");
+Console.WriteLine("-------------------------------------------------------------------------------");
+
+
