@@ -3,8 +3,8 @@ using MetaExchange.Shared.Data;
 using MetaExchange.Shared.Model;
 using MetaExchange.Shared.Services;
 
-IOrderBookRepository orderBookRepository = new OrderBookRepository();
-IMetaExchangeCalculator metaExchangeCalculator = new MetaExchangeCalculator(orderBookRepository);
+IExchangeRepository exchangeRepository = new ExchangeRepository();
+IMetaExchangeCalculator metaExchangeCalculator = new MetaExchangeCalculator(exchangeRepository);
 
 
 Console.WriteLine("Welcome to MetaExchange!");

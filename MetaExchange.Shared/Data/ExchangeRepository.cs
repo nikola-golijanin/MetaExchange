@@ -4,9 +4,9 @@ using MetaExchange.Shared.Model;
 
 namespace MetaExchange.Shared.Data;
 
-public class OrderBookRepository : IOrderBookRepository
+public class ExchangeRepository : IExchangeRepository
 {
-    public IEnumerable<Exchange> GetOrderBooks()
+    public IEnumerable<Exchange> GetExchanges()
     {
         string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         string jsonFilePath = Path.Combine(baseDirectory, "Data\\data.json");

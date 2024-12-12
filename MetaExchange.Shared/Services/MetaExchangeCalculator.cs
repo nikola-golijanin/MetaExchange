@@ -5,10 +5,10 @@ namespace MetaExchange.Shared.Services;
 
 public class MetaExchangeCalculator : IMetaExchangeCalculator
 {
-    private readonly IEnumerable<Exchange> _orderBooks;
-    public MetaExchangeCalculator(IOrderBookRepository orderBookRepository)
+    private readonly IEnumerable<Exchange> _exchanges;
+    public MetaExchangeCalculator(IExchangeRepository orderBookRepository)
     {
-        _orderBooks = orderBookRepository.GetOrderBooks();
+        _exchanges = orderBookRepository.GetExchanges();
     }
     public IEnumerable<ExecutionPlan> GetBestExecutionPlanOrderByExchange(OrderType orderType, double amount)
     {
@@ -25,8 +25,8 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
     public IEnumerable<Order> GetBestExecutionPlan(OrderType orderType, double amount) =>
         orderType switch
         {
-            OrderType.Buy => CalculateBestAsks(_orderBooks, amount),
-            OrderType.Sell => CalculateBestBids(_orderBooks, amount),
+            OrderType.Buy => CalculateBestAsks(_exchanges, amount),
+            OrderType.Sell => CalculateBestBids(_exchanges, amount),
             _ => throw new ArgumentException("Invalid order type")
         };
 

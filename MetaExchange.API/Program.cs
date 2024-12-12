@@ -14,7 +14,7 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IOrderBookRepository, OrderBookRepository>();
+builder.Services.AddScoped<IExchangeRepository, ExchangeRepository>();
 builder.Services.AddScoped<IMetaExchangeCalculator, MetaExchangeCalculator>();
 
 var app = builder.Build();
