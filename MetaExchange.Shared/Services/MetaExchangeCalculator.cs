@@ -6,9 +6,9 @@ namespace MetaExchange.Shared.Services;
 public class MetaExchangeCalculator : IMetaExchangeCalculator
 {
     private readonly IEnumerable<Exchange> _exchanges;
-    public MetaExchangeCalculator(IExchangeRepository orderBookRepository)
+    public MetaExchangeCalculator(IExchangeRepository exchangeRepository)
     {
-        _exchanges = orderBookRepository.GetExchanges();
+        _exchanges = exchangeRepository.GetExchanges();
     }
     public IEnumerable<ExecutionPlan> GetBestExecutionPlanOrderByExchange(OrderType orderType, double amount)
     {
