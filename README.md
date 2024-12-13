@@ -6,6 +6,8 @@ Before you begin, ensure you have the following installed on your machine:
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Optional] [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) with the ASP.NET and web development workload
+- [Optional] [JetBrains Rider](https://www.jetbrains.com/rider/) 
+- [Docker](https://www.docker.com/get-started)
 
 ## Getting Started
 
@@ -14,7 +16,7 @@ Before you begin, ensure you have the following installed on your machine:
 
 ### Running the Application
 
-#### Using Visual Studio
+#### Using Visual Studio/JetBrains Rider or any other IDE
 
 1. Open the solution file `MetaExchange.sln` in Visual Studio.
 2. Set `MetaExchange.API` or `MetaExchange.Console` as the startup project.
@@ -26,7 +28,6 @@ Before you begin, ensure you have the following installed on your machine:
 2. Run the following command to start the application:
 
 `dotnet run` 
-
 
 ## Swagger
 
