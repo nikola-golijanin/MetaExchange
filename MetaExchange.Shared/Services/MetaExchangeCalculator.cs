@@ -29,7 +29,9 @@ public class MetaExchangeCalculator : IMetaExchangeCalculator
             OrderType.Sell => CalculateBestBids(_exchanges, amount),
             _ => throw new ArgumentException("Invalid order type")
         };
-
+    
+    // TODO: Question for interviewer: What if the amount we want to buy/sell is bigger than the current Exchange Balance?
+    // Should we handle error in a manner of an unsuccessfully response or return maximum that is allowed by balance? 
     private static IEnumerable<Order> CalculateBestAsks(IEnumerable<Exchange> orderBooks, double amount)
     {
         var result = new List<Order>();
