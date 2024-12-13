@@ -9,7 +9,7 @@ public class ExchangeRepository : IExchangeRepository
     public IEnumerable<Exchange> GetExchanges()
     {
         string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string jsonFilePath = Path.Combine(baseDirectory, "Data\\data.json");
+        string jsonFilePath = Path.Combine(baseDirectory, "Data/data.json");
 
         string jsonString = File.ReadAllText(jsonFilePath);
         return JsonSerializer.Deserialize<IEnumerable<Exchange>>(jsonString, new JsonSerializerOptions
